@@ -8,21 +8,22 @@ fi
 
 # Update system packages
 echo "Updating system packages..."
-sudo yum update -y
+sudo apt-get update -y
+sudo apt-get upgrade -y
 
 # Install NVM (Node Version Manager) and Node.js
 echo "Installing NVM and Node.js..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-source ~/.nvm/nvm.sh
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 nvm install node
 
 # Install PostgreSQL
 echo "Installing PostgreSQL..."
-sudo yum install -y postgresql postgresql-server
+sudo apt-get install -y postgresql postgresql-contrib
 
-# Initialize DB and start PostgreSQL
+# PostgreSQL service commands remain the same (systemctl is used across both yum and apt systems)
 echo "Initializing PostgreSQL..."
-sudo postgresql-setup --initdb
 sudo systemctl enable postgresql
 sudo systemctl start postgresql
 
@@ -39,14 +40,10 @@ cd myapp
 echo "Installing project dependencies..."
 npm install
 
-# If Material-UI is not already in your package.json dependencies, uncomment the following line:
+# Optional: Install Material-UI if it's not already in your package.json
 # npm install @material-ui/core
 
-# Configure Express server in your project as needed
-# Example server configuration is provided below. This assumes you have an Express setup ready.
-# If you're dynamically creating a server file, adjust paths and logic as per your project structure
-
-# Example: Dynamically creating a simple Express server file to serve React build files
+# Setting up Express server to serve React build files
 echo "Setting up Express server to serve React build files..."
 cat > ./server.js <<EOL
 const express = require('express');
